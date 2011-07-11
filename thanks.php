@@ -103,7 +103,7 @@ else
 		{
 			// For a page
 			$t->assign(array(
-				'THANKS_ROW_URL' => empty($row['page_alias']) ? cot_url('page', 'id='.$row['th_item']) : cot_url('page', 'alias='.$row['page_alias']),
+				'THANKS_ROW_URL' => empty($row['page_alias']) ? cot_url('page', 'id='.$row['th_item']) : cot_url('page', 'al='.$row['page_alias']),
 				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['page'][$row['page_cat']]['title']),
 				'THANKS_ROW_CAT_URL' => cot_url('page', 'c='.$row['page_cat']),
 				'THANKS_ROW_TITLE' => htmlspecialchars($row['page_title'])
