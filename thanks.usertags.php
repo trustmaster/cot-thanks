@@ -30,4 +30,3 @@ $temp_array['THANKS_URL'] = cot_url('plug', 'e=thanks&user=' . $user_data['user_
 $temp_array['THANKS_TIMES'] = cot_declension($user_data['user_thanks'], 'Times', true);
 
 ?>
-
