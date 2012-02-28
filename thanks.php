@@ -95,7 +95,7 @@ else
 	{
 		$t->assign(array(
 				'THANKS_ROW_ID' => $row['th_id'],
-				'THANKS_ROW_DATE' => cot_date('datetime_medium', cot_date2stamp($row['th_date'])),
+				'THANKS_ROW_DATE' => cot_date('datetime_medium', cot_date2stamp($row['th_date'], 'Y-m-d H:i:s')),
 				'THANKS_ROW_FROM_URL' => cot_url('users', 'm=details&id='.$row['th_fromuser'].'&u='.urlencode($row['user_name'])),
 				'THANKS_ROW_FROM_NAME' => htmlspecialchars($row['user_name'])
 			));
