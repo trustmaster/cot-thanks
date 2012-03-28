@@ -16,4 +16,6 @@
 	</tr>
 	<!-- END: THANKS_ROW -->
 </table>
+
+<p class="pagination">{PAGEPREV} {PAGENAV} {PAGENEXT}</p>
 <!-- END: MAIN -->

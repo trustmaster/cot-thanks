@@ -22,5 +22,6 @@ $L['thanks_for_user'] = 'Thanks for user';
 $L['thanks_times'] = 'times';
 $L['thanks_thanked'] = 'Thanked';
 $L['thanks_thanks'] = 'Thank you!';
+$L['thanks_top'] = 'Top thanked users';
 
 ?>

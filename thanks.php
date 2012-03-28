@@ -73,15 +73,15 @@ if ($a == 'thank' && !empty($ext) && $item > 0)
 	));
 	cot_display_messages($t);
 }
-else
+elseif ($user > 0)
 {
-	if (!$user)
-	{
-		$user = $usr['id'];
-	}
 	// List all user's thanks here
 	require_once cot_incfile('page', 'module');
 	require_once cot_incfile('forums', 'module');
+	
+	list($pg, $d, $durl) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
+	
+	$totalitems = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_touser = $user")->fetchColumn();
 	
 	$res = $db->query("SELECT t.*, pag.page_alias, pag.page_title, pag.page_cat, ft.ft_title, p.fp_cat, u.user_name
 		FROM $db_thanks AS t
@@ -90,7 +90,8 @@ else
 			LEFT JOIN $db_forum_posts AS p ON t.th_ext = 'forums' AND t.th_item = p.fp_id
 				LEFT JOIN $db_forum_topics AS ft ON p.fp_id > 0 AND p.fp_topicid = ft.ft_id
 		WHERE th_touser = $user
-		ORDER BY th_date DESC");
+		ORDER BY th_date DESC
+		LIMIT $d, {$cfg['plugin']['thanks']['maxrowsperpage']}");
 	foreach ($res->fetchAll() as $row)
 	{
 		$t->assign(array(
@@ -127,6 +128,46 @@ else
 	$t->assign(array(
 		'THANKS_USER_NAME' => htmlspecialchars($name),
 		'THANKS_USER_URL' => cot_url('users', 'm=details&id='.$user.'&u='.$name)
+	));
+	
+	$pagenav = cot_pagenav('plug','e=thanks&user='.$user, $d, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
+	$t->assign(array(
+		'PAGEPREV' => $pagenav['prev'],
+		'PAGENEXT' => $pagenav['next'],
+		'PAGENAV' => $pagenav['main']
+	));
+}
+else
+{
+	// Top thanked users
+	list($pg, $d, $durl) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
+	
+	$t = new XTemplate(cot_tplfile('thanks.top', 'plug'));
+	
+	$totalitems = $db->query("SELECT COUNT(*) FROM $db_users")->fetchColumn();
+	
+	$res = $db->query("SELECT u.*, (SELECT COUNT(*) FROM $db_thanks AS t WHERE t.th_touser = u.user_id) AS th_count
+		FROM $db_users AS u
+		ORDER BY th_count DESC
+		LIMIT $d, {$cfg['plugin']['thanks']['maxrowsperpage']}");
+	$num = $d + 1;
+	foreach ($res->fetchAll() as $row)
+	{
+		$t->assign(cot_generate_usertags($row, 'THANKS_ROW_'));
+		$t->assign(array(
+			'THANKS_ROW_NUM' => $num,
+			'THANKS_ROW_TOTALCOUNT' => $row['th_count'],
+			'THANKS_ROW_URL' => cot_url('plug', 'e=thanks&user='.$row['user_id'])
+		));
+		$t->parse('MAIN.THANKS_ROW');
+		$num++;
+	}
+	
+	$pagenav = cot_pagenav('plug','e=thanks', $d, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
+	$t->assign(array(
+		'PAGEPREV' => $pagenav['prev'],
+		'PAGENEXT' => $pagenav['next'],
+		'PAGENAV' => $pagenav['main']
 	));
 }
 
