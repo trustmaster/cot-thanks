@@ -9,9 +9,9 @@ Hooks=standalone
  * Thanks main script
  *
  * @package thanks
- * @version 1.0
+ * @version 1.2
  * @author Trustmaster
- * @copyright Copyright (c) Vladimir Sibirov 2011
+ * @copyright Copyright (c) Vladimir Sibirov 2011-2012
  * @license BSD
  */
 
@@ -32,6 +32,11 @@ if ($a == 'thank' && !empty($ext) && $item > 0)
 	{
 		require_once cot_incfile('forums', 'module');
 		$res = $db->query("SELECT fp_posterid FROM $db_forum_posts WHERE fp_id = $item");
+	}
+	elseif ($ext == 'comments')
+	{
+		require_once cot_incfile('comments', 'plug');
+		$res = $db->query("SELECT com_authorid FROM $db_com WHERE com_id = $item");
 	}
 	else
 	{
@@ -78,17 +83,25 @@ elseif ($user > 0)
 	// List all user's thanks here
 	require_once cot_incfile('page', 'module');
 	require_once cot_incfile('forums', 'module');
+	if (cot_plugin_active('comments'))
+	{
+		require_once cot_incfile('comments', 'plug');
+		$thanks_join_columns = ", com.*, pag2.*";
+		$thanks_join_tables = "LEFT JOIN $db_com AS com ON t.th_ext = 'comments' AND t.th_item = com.com_id
+			LEFT JOIN $db_pages AS pag2 ON com.com_area = 'page' AND com.com_code = pag2.page_id";
+	}
 	
 	list($pg, $d, $durl) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
 	
 	$totalitems = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_touser = $user")->fetchColumn();
 	
-	$res = $db->query("SELECT t.*, pag.page_alias, pag.page_title, pag.page_cat, ft.ft_title, p.fp_cat, u.user_name
+	$res = $db->query("SELECT t.*, pag.page_alias, pag.page_title, pag.page_cat, ft.ft_title, p.fp_cat, u.user_name $thanks_join_columns
 		FROM $db_thanks AS t
 			LEFT JOIN $db_users AS u ON t.th_fromuser = u.user_id
 			LEFT JOIN $db_pages AS pag ON t.th_ext = 'page' AND t.th_item = pag.page_id
 			LEFT JOIN $db_forum_posts AS p ON t.th_ext = 'forums' AND t.th_item = p.fp_id
 				LEFT JOIN $db_forum_topics AS ft ON p.fp_id > 0 AND p.fp_topicid = ft.ft_id
+			$thanks_join_tables
 		WHERE th_touser = $user
 		ORDER BY th_date DESC
 		LIMIT $d, {$cfg['plugin']['thanks']['maxrowsperpage']}");
@@ -100,7 +113,17 @@ elseif ($user > 0)
 				'THANKS_ROW_FROM_URL' => cot_url('users', 'm=details&id='.$row['th_fromuser'].'&u='.urlencode($row['user_name'])),
 				'THANKS_ROW_FROM_NAME' => htmlspecialchars($row['user_name'])
 			));
-		if (!empty($row['page_title']))
+		if (!empty($row['com_author']))
+		{
+			$urlp = empty($row['page_alias']) ? array('c' => $row['page_cat'], 'id' => $row['page_id']) : array('c' => $row['page_cat'], 'al' => $row['page_alias']);
+			$t->assign(array(
+				'THANKS_ROW_URL' => cot_url($row['com_area'], $urlp, '#c' . $row['th_item']),
+				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['page'][$row['page_cat']]['title']),
+				'THANKS_ROW_CAT_URL' => cot_url('page', 'c='.$row['page_cat']),
+				'THANKS_ROW_TITLE' => $L['comments_comment'] . ': ' . htmlspecialchars($row['page_title'])
+			));
+		}
+		elseif (!empty($row['page_title']))
 		{
 			// For a page
 			$t->assign(array(
@@ -110,7 +133,7 @@ elseif ($user > 0)
 				'THANKS_ROW_TITLE' => htmlspecialchars($row['page_title'])
 			));
 		}
-		else if (!empty($row['ft_title']))
+		elseif (!empty($row['ft_title']))
 		{
 			// For a page
 			$t->assign(array(

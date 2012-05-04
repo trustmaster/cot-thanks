@@ -3,7 +3,7 @@
  * Thanks Russian language file
  *
  * @package thanks
- * @version 1.0
+ * @version 1.2
  * @author Trustmaster
  * @copyright Copyright (c) Vladimir Sibirov 2011
  * @license BSD
@@ -13,6 +13,7 @@ defined('COT_CODE') or die('Wrong URL');
 
 $L['cfg_maxday'] = 'Макс. благодарностей для раздачи в день';
 $L['cfg_maxuser'] = 'Макс. благодарностей в день 1 получателю';
+$L['cfg_comorder'] = 'Сортировать комментарии по количеству благодарностей';
 
 $L['thanks_back'] = 'Вернуться';
 $L['thanks_done'] = 'Вы поблагодарили этого человека';

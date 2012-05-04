@@ -3,9 +3,10 @@
 [BEGIN_COT_EXT]
 Code=thanks
 Name=Thanks
-Description=Users can thank each other for pages and posts
-Version=1.1
-Date=2012-03-28
+Category=community-social
+Description=Users can thank each other for pages, posts and comments
+Version=1.2
+Date=2012-04-28
 Author=Trustmaster
 Copyright=All rights reserved (c) Vladimir Sibirov 2011-2012
 Notes=BSD License
@@ -15,12 +16,14 @@ Lock_guests=12345A
 Auth_members=RW
 Lock_members=12345
 Recommends_modules=page,forums
+Recommends_plugins=comments
 [END_COT_EXT]
 
 [BEGIN_COT_EXT_CONFIG]
 maxday=01:string::10:Max thanks a user can give a day
 maxuser=02:string::5:Max thanks a day a user can give to a particular user
 maxrowsperpage=03:string::20:Max thanks displayed per page
+comorder=04:radio::0:Sort comments by thanks
 [END_COT_EXT_CONFIG]
 ==================== */
 
