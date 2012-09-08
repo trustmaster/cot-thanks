@@ -51,7 +51,7 @@ if ($a == 'thank' && !empty($ext) && $item > 0)
 		$ext['status'] = '400 Bad Request';
 		cot_die();
 	}
-	
+
 	$status = thanks_check($user, $usr['id'], $ext, $item);
 	switch ($status)
 	{
@@ -86,15 +86,15 @@ elseif ($user > 0)
 	if (cot_plugin_active('comments'))
 	{
 		require_once cot_incfile('comments', 'plug');
-		$thanks_join_columns = ", com.*, pag2.*";
+		$thanks_join_columns = ", com.*, pag2.page_alias AS p2_alias, pag2.page_id AS p2_id, pag2.page_cat AS p2_cat, pag2.page_title AS p2_title";
 		$thanks_join_tables = "LEFT JOIN $db_com AS com ON t.th_ext = 'comments' AND t.th_item = com.com_id
 			LEFT JOIN $db_pages AS pag2 ON com.com_area = 'page' AND com.com_code = pag2.page_id";
 	}
-	
+
 	list($pg, $d, $durl) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
-	
+
 	$totalitems = $db->query("SELECT COUNT(*) FROM $db_thanks WHERE th_touser = $user")->fetchColumn();
-	
+
 	$res = $db->query("SELECT t.*, pag.page_alias, pag.page_title, pag.page_cat, ft.ft_title, p.fp_cat, u.user_name $thanks_join_columns
 		FROM $db_thanks AS t
 			LEFT JOIN $db_users AS u ON t.th_fromuser = u.user_id
@@ -115,12 +115,12 @@ elseif ($user > 0)
 			));
 		if (!empty($row['com_author']))
 		{
-			$urlp = empty($row['page_alias']) ? array('c' => $row['page_cat'], 'id' => $row['page_id']) : array('c' => $row['page_cat'], 'al' => $row['page_alias']);
+			$urlp = empty($row['p2_alias']) ? array('c' => $row['p2_cat'], 'id' => $row['p2_id']) : array('c' => $row['p2_cat'], 'al' => $row['p2_alias']);
 			$t->assign(array(
 				'THANKS_ROW_URL' => cot_url($row['com_area'], $urlp, '#c' . $row['th_item']),
-				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['page'][$row['page_cat']]['title']),
-				'THANKS_ROW_CAT_URL' => cot_url('page', 'c='.$row['page_cat']),
-				'THANKS_ROW_TITLE' => $L['comments_comment'] . ': ' . htmlspecialchars($row['page_title'])
+				'THANKS_ROW_CAT_TITLE' => htmlspecialchars($structure['page'][$row['p2_cat']]['title']),
+				'THANKS_ROW_CAT_URL' => cot_url('page', 'c='.$row['p2_cat']),
+				'THANKS_ROW_TITLE' => $L['comments_comment'] . ': ' . htmlspecialchars($row['p2_title'])
 			));
 		}
 		elseif (!empty($row['page_title']))
@@ -145,14 +145,14 @@ elseif ($user > 0)
 		}
 		$t->parse('MAIN.THANKS_ROW');
 	}
-	
+
 	$name = $user == $usr['id'] ?  $usr['name'] : $db->query("SELECT user_name FROM $db_users WHERE user_id = $user")->fetchColumn();
-	
+
 	$t->assign(array(
 		'THANKS_USER_NAME' => htmlspecialchars($name),
 		'THANKS_USER_URL' => cot_url('users', 'm=details&id='.$user.'&u='.$name)
 	));
-	
+
 	$pagenav = cot_pagenav('plug','e=thanks&user='.$user, $d, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
 	$t->assign(array(
 		'PAGEPREV' => $pagenav['prev'],
@@ -164,11 +164,11 @@ else
 {
 	// Top thanked users
 	list($pg, $d, $durl) = cot_import_pagenav('d', $cfg['plugin']['thanks']['maxrowsperpage']);
-	
+
 	$t = new XTemplate(cot_tplfile('thanks.top', 'plug'));
-	
+
 	$totalitems = $db->query("SELECT COUNT(*) FROM $db_users")->fetchColumn();
-	
+
 	$res = $db->query("SELECT u.*, (SELECT COUNT(*) FROM $db_thanks AS t WHERE t.th_touser = u.user_id) AS th_count
 		FROM $db_users AS u
 		ORDER BY th_count DESC
@@ -185,7 +185,7 @@ else
 		$t->parse('MAIN.THANKS_ROW');
 		$num++;
 	}
-	
+
 	$pagenav = cot_pagenav('plug','e=thanks', $d, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
 	$t->assign(array(
 		'PAGEPREV' => $pagenav['prev'],
