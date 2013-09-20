@@ -43,6 +43,12 @@ function thanks_add($touser, $fromuser, $ext, $item)
 	));
 	if ($ins)
 	{
+		/* === Hook === */
+		foreach (cot_getextplugins('thanks.add.done') as $pl)
+		{
+			include $pl;
+		}
+		/* ===== */
 		$db->query("UPDATE `$db_users` SET user_thanks = user_thanks + 1 WHERE user_id = ?", array($touser));
 	}
 	return (bool) $ins;
