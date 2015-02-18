@@ -24,12 +24,12 @@ define('THANKS_ERR_SELF', 4);
 
 /**
  * Adds a new thank. Don't forget to use thanks_check() before calling this function.
- * 
+ *
  * @param int $touser Thank receiver ID
  * @param int $fromuser Thank sender ID
  * @param string $ext Extension code
  * @param int $item Item ID
- * @return bool 
+ * @return bool
  */
 function thanks_add($touser, $fromuser, $ext, $item)
 {
@@ -56,47 +56,47 @@ function thanks_add($touser, $fromuser, $ext, $item)
 
 /**
  * Checks if it is correct to add a new thank
- * 
+ *
  * @param int $touser Thank receiver ID
  * @param int $fromuser Thank sender ID
  * @param string $ext Extension code
  * @param int $item Item ID
- * @return int One of the THANKS_ERR_* constants, THANKS_ERR_NONE if it is OK to add this thank. 
+ * @return int One of the THANKS_ERR_* constants, THANKS_ERR_NONE if it is OK to add this thank.
  */
 function thanks_check($touser, $fromuser, $ext, $item)
 {
 	global $db, $db_thanks, $cfg;
-	
+
 	if ($touser == $fromuser)
 	{
 		return THANKS_ERR_SELF;
 	}
-	
+
 	if ($db->query("SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = ? AND DATE(`th_date`) = DATE(NOW())", array($fromuser))->fetchColumn() >= $cfg['plugin']['thanks']['maxday'])
 	{
 		return THANKS_ERR_MAXDAY;
 	}
-	
+
 	if ($db->query("SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = ? AND `th_touser` = ? AND DATE(`th_date`) = DATE(NOW())", array($fromuser, $touser))->fetchColumn() >= $cfg['plugin']['thanks']['maxuser'])
 	{
 		return THANKS_ERR_MAXUSER;
 	}
-	
+
 	if ($db->query("SELECT COUNT(*) FROM `$db_thanks` WHERE `th_fromuser` = ? AND `th_ext` = ? AND `th_item` = ?", array($fromuser, $ext, $item))->fetchColumn() >= 1)
 	{
 		return THANKS_ERR_ITEM;
 	}
-	
+
 	return THANKS_ERR_NONE;
 }
 
 /**
  * Returns TRUE if the user has already thanked for given item or FALSE otherwise.
- * 
+ *
  * @param int $fromuser Thank sender ID
  * @param string $ext Extension code
  * @param int $item Item ID
- * @return bool 
+ * @return bool
  */
 function thanks_check_item($fromuser, $ext, $item)
 {
@@ -106,7 +106,7 @@ function thanks_check_item($fromuser, $ext, $item)
 
 /**
  * Removes a thank by ID
- * 
+ *
  * @param int $id Thank ID
  * @return bool
  */

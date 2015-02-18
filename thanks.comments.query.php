@@ -34,4 +34,3 @@ if ($cfg['plugin']['comments']['comorder'])
 	$comments_order = "thanks_count DESC, " . $comments_order;
 }
 
-?>

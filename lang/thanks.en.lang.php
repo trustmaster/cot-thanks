@@ -11,6 +11,8 @@
 
 defined('COT_CODE') or die('Wrong URL');
 
+$L['cfg_short'] = 'Short form of thanks - only user name ( no Date stamp )';
+
 $L['thanks_back'] = 'Back';
 $L['thanks_done'] = 'You have thanked this user';
 $L['thanks_ensure'] = 'Do you want to thank this user?';
@@ -23,5 +25,6 @@ $L['thanks_times'] = 'times';
 $L['thanks_thanked'] = 'Thanked';
 $L['thanks_thanks'] = 'Thank you!';
 $L['thanks_top'] = 'Top thanked users';
+$L['thanks_tag'] = 'User says Thanks: ';
 
-?>
+

@@ -23,5 +23,5 @@ $L['thanks_times'] = 'keer';
 $L['thanks_thanked'] = 'Bedankt';
 $L['thanks_thanks'] = 'Bedankt!';
 $L['thanks_top'] = 'Top bedankt gebruikers';
+$L['thanks_tag'] = 'User says Thanks: ';
 
-?>
