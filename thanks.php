@@ -154,7 +154,7 @@ elseif ($user > 0)
 		'THANKS_USER_URL' => cot_url('users', 'm=details&id='.$user.'&u='.$name)
 	));
 
-	$pagenav = cot_pagenav('plug','e=thanks&user='.$user, $d, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
+	$pagenav = cot_pagenav('plug','e=thanks&user='.$user, $db_thanks, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
 	$t->assign(array(
 		'PAGEPREV' => $pagenav['prev'],
 		'PAGENEXT' => $pagenav['next'],
@@ -187,7 +187,7 @@ else
 		$num++;
 	}
 
-	$pagenav = cot_pagenav('plug','e=thanks', $d, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
+	$pagenav = cot_pagenav('plug','e=thanks', $db_thanks, $totalitems, $cfg['plugin']['thanks']['maxrowsperpage']);
 	$t->assign(array(
 		'PAGEPREV' => $pagenav['prev'],
 		'PAGENEXT' => $pagenav['next'],
